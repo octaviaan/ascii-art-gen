@@ -165,6 +165,29 @@ function setup() {
   fontSizeSlider.addClass("control-slider");
   fontSizeSlider.input(handleFontSizeChange);
 
+  const spacingDropdown = createElement("details");
+  spacingDropdown.attribute("open", "");
+  spacingDropdown.addClass("control-dropdown");
+  spacingDropdown.parent(controls);
+
+  createElement("summary", "Character Spacing")
+    .addClass("control-summary")
+    .parent(spacingDropdown);
+
+  const spacingBody = createDiv();
+  spacingBody.addClass("control-body");
+  spacingBody.parent(spacingDropdown);
+
+  spacingLabel = createSpan();
+  spacingLabel.addClass("control-value");
+  spacingLabel.parent(spacingBody);
+
+  spacingSlider = createSlider(-2, 6, 0, 0.1);
+  spacingSlider.parent(spacingBody);
+  spacingSlider.addClass("control-slider");
+  spacingSlider.input(handleSpacingChange);
+  updateSpacingLabel();
+
   const adjustDropdown = createElement("details");
   adjustDropdown.attribute("open", "");
   adjustDropdown.addClass("control-dropdown");
@@ -218,29 +241,6 @@ function setup() {
   colorModeSelect.parent(colorModeBody);
   colorModeSelect.value("monochrome");
   colorModeSelect.changed(handleColorModeChange);
-
-  const typographyDropdown = createElement("details");
-  typographyDropdown.attribute("open", "");
-  typographyDropdown.addClass("control-dropdown");
-  typographyDropdown.parent(controls);
-
-  createElement("summary", "Typography")
-    .addClass("control-summary")
-    .parent(typographyDropdown);
-
-  const typographyBody = createDiv();
-  typographyBody.addClass("control-body");
-  typographyBody.parent(typographyDropdown);
-
-  spacingLabel = createSpan();
-  spacingLabel.addClass("control-value");
-  spacingLabel.parent(typographyBody);
-
-  spacingSlider = createSlider(-2, 6, 0, 0.1);
-  spacingSlider.parent(typographyBody);
-  spacingSlider.addClass("control-slider");
-  spacingSlider.input(handleSpacingChange);
-  updateSpacingLabel();
 
   const colorDropdown = createElement("details");
   colorDropdown.attribute("open", "");
