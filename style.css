@@ -1,0 +1,348 @@
+:root {
+  --bg: #05060a;
+  --bg-alt: #11121a;
+  --panel: rgba(0, 0, 0, 0.402);
+  --accent: #000000;
+  --accent-strong: #ffca61;
+  --accent-glow: rgb(255, 187, 51);
+  --text: #e2b100;
+  --muted: rgba(253, 244, 227, 0.65);
+  --border-cream: rgba(255, 149, 0, 0.403);
+  --shadow-lg: 0 8px 20px rgba(255, 166, 0, 0.162);
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+}
+
+canvas {
+  display: block;
+}
+
+body {
+  box-sizing: border-box;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 32px 24px 48px;
+  background: radial-gradient(
+      circle at 24% 18%,
+      rgba(255, 123, 0, 0.18),
+      transparent 52%
+    ),
+    radial-gradient(circle at 78% -8%, rgba(255, 123, 0, 0.12), transparent 55%),
+    var(--bg);
+  color: var(--text);
+  font-family: "IBM Plex Sans", Arial, sans-serif;
+}
+
+/* Primary wrapper that positions the ASCII output beside the settings panel */
+.layout {
+  width: min(1100px, 100%);
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: clamp(20px, 4vw, 48px);
+  flex-wrap: wrap;
+  padding-right: 360px;
+  position: relative;
+}
+
+/* Flexible region that holds the ASCII art canvas */
+.ascii-container {
+  flex: 1 1 420px;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  position: relative;
+  width: 100%;
+  max-width: 720px;
+}
+
+/* Fixed side panel that keeps the controls visible while scrolling */
+.settings-panel {
+  width: 320px;
+  max-height: calc(100vh - 80px);
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  position: fixed;
+  top: 40px;
+  right: clamp(24px, 6vw, 64px);
+  margin-left: 0;
+  z-index: 10;
+  overflow: visible;
+}
+
+/* Vertical stack for all control groups within the panel */
+.controls {
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  flex: 1;
+  overflow-y: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.controls::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+}
+
+/* Collapsible control group container styling */
+.control-dropdown {
+  border-radius: 8px;
+  background: var(--panel);
+  border: 1px solid var(--border-cream);
+  transition: border 0.2s ease, transform 0.2s ease;
+}
+
+/* Header row that toggles the dropdown details */
+.control-summary {
+  margin: 0;
+  padding: 16px 18px;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  color: var(--text);
+  user-select: none;
+}
+
+.control-summary::-webkit-details-marker {
+  display: none;
+}
+
+.control-summary::after {
+  content: "▽";
+  font-size: 1rem;
+  letter-spacing: normal;
+  color: var(--text);
+  transition: transform 0.2s ease;
+}
+
+.control-dropdown[open] .control-summary::after {
+  transform: rotate(-180deg);
+}
+
+/* Content area for form fields inside a dropdown */
+.control-body {
+  padding: 16px 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-width: 0;
+}
+
+.control-body > * {
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+}
+
+/* Small label text for showing current control values */
+.control-value {
+  font-size: 0.82rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #ffe9b2;
+}
+
+/* Generic button styling used by actions in the panel */
+.control-button {
+  width: 100%;
+  border: 1px solid var(--border-cream);
+  border-radius: 8px;
+  padding: 12px 16px;
+  background: rgba(0, 0, 0, 0.75);
+  color: var(--text);
+  font-size: 0.86rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.control-button:hover {
+  transform: translateY(-2px);
+  border-color: rgba(253, 244, 227, 0.8);
+}
+
+.control-button:active {
+  transform: translateY(0);
+}
+
+/* Styled block that renders the ASCII art output text */
+.ascii-output {
+  font-family: "Courier New", monospace;
+  white-space: pre;
+  line-height: 1;
+  font-size: 8px;
+  display: inline-block;
+  padding: 20px;
+  border-radius: 12px;
+  /* border: 1px solid var(--border-cream); */
+  background: rgba(7, 6, 10, 0.92);
+  color: var(--text);
+  transition: text-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+/* Base styling shared by select boxes, numeric inputs, and file picker */
+.control-select,
+.custom-input,
+input[type="file"] {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  background: rgba(12, 13, 19, 0.85);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 10px 12px;
+  font-size: 0.95rem;
+  transition: border 0.2s ease, transform 0.2s ease;
+}
+
+.control-select:focus,
+.custom-input:focus,
+input[type="file"]:focus {
+  border-color: rgba(253, 244, 227, 0.85);
+  box-shadow: none;
+  outline: none;
+  transform: translateY(-1px);
+}
+
+/* Swatch input that shows the currently selected color */
+.control-color {
+  width: 100%;
+  height: 32px;
+  border-radius: 16px;
+  border: 1px solid var(--border-cream);
+  background: rgba(12, 13, 19, 0.85);
+  box-shadow: none;
+  cursor: pointer;
+  transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.control-color::-webkit-color-swatch {
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+}
+
+.control-color::-webkit-color-swatch-wrapper {
+  padding: 0;
+}
+
+.control-color::-moz-color-swatch {
+  border: none;
+  border-radius: 16px;
+}
+
+/* Wrapper for toggle rows pairing label text with a checkbox */
+.control-toggle {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.82rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--text);
+}
+
+/* Custom checkbox styling for toggle inputs */
+.control-toggle input {
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 1px solid var(--border-cream);
+  background: rgba(12, 13, 19, 0.9);
+  box-shadow: none;
+  position: relative;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.2s ease;
+}
+
+.control-toggle input:checked {
+  background: var(--accent);
+}
+
+.control-toggle input:checked::after {
+  content: "";
+  position: absolute;
+  top: 2px;
+  left: 8px;
+  width: 6px;
+  height: 12px;
+  border-right: 2px solid #ffc14e;
+  border-bottom: 2px solid #ffc14e;
+  transform: rotate(40deg);
+}
+
+input[type="file"]::file-selector-button,
+input[type="file"]::-webkit-file-upload-button {
+  background: var(--accent);
+  color: var(--text);
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 123, 0, 0.35);
+  cursor: pointer;
+  text-transform: none;
+  letter-spacing: 0.02em;
+  font-size: 0.95rem;
+  box-shadow: none;
+  transition: transform 0.2s ease;
+}
+
+input[type="file"]::file-selector-button:hover,
+input[type="file"]::-webkit-file-upload-button:hover {
+  transform: translateY(-1px);
+}
+
+/* Range slider track styling shared across browsers */
+.control-slider {
+  width: 100%;
+  appearance: none;
+  height: 28px;
+  border-radius: 14px;
+  background: rgba(255, 123, 0, 0.282);
+}
+
+.control-slider::-webkit-slider-thumb {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  background: var(--text);
+  cursor: pointer;
+  transition: transform 0.25s ease;
+}
+
+.control-slider::-webkit-slider-thumb:hover {
+  transform: scale(1.3);
+}
+
+.control-slider::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 10px;
+  background: var(--accent);
+  cursor: pointer;
+  transition: transform 0.15s ease;
+}
+
+.control-slider::-moz-range-thumb:hover {
+  transform: scale(1.1);
+}
